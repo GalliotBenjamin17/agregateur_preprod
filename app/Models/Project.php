@@ -61,7 +61,8 @@ class Project extends Model
         'tco2' => 'float',
         'expenses' => 'array',
         'revenues' => 'array',
-        'is_synchronized_with_parent' => 'boolean'
+        'is_synchronized_with_parent' => 'boolean',
+        'plantation_at' => 'date',
     ];
 
     public static function boot()

@@ -27,6 +27,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\DatePicker;
 use Filament\Actions\Contracts\HasActions;
 use App\Enums\Models\Projects\ProjectStateEnum;
 use App\Services\Features\AddressLookupService;
@@ -149,7 +150,15 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 })
                                 ->label('Référence DREAL')
                                 ->nullable(),
+                                DatePicker::make('project.plantation_at')
+                                    ->label('Date de plantation')
+                                    ->native(false)
+                                    ->displayFormat('Y-m-d')
+                                    ->closeOnDateSelection()
+                                    ->nullable(),
                         ]),
+
+
 
                     Fieldset::make('project_management')
                         ->label('Visibilité / synchronisation projet')
