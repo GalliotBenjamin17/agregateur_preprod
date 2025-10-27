@@ -1,4 +1,54 @@
 # README
+# Guide d’installation locale — Application Agregateur
+
+## Récupérer le projet
+git clone <URL_DU_DEPOT> agregateur
+cd agregateur
+
+## Copier l'ancien .env
+
+Copier l'ancien .env , notamment : 
+
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=base64:t0gLwwgAXMnGbQVJXvPF60vFoTguz3ybGpZhYkkSwks=
+APP_DEBUG=true
+# Use a full URL with scheme to avoid bad redirects / asset URLs
+APP_URL=http://localhost:8005
+# Public base host used for tenant subdomains in local
+DISPLAYED_APP_URL=localhost
+
+## Installer les dépendances
+composer install
+npm install
+
+Voici le récap précis des actions et réglages qui ont permis de faire fonctionner l’accès et la redirection vers l’interface contributeur.
+
+Changements .env
+
+APP_URL=http://localhost:8005 pour générer des URLs correctes via Laravel.
+DISPLAYED_APP_URL=localhost sans port pour que le routage par sous‑domaine fonctionne.
+TELESCOPE_ENABLED=false pour éviter des erreurs 500 liées à Telescope/MySQL.
+Caches vidés: php artisan config:clear, php artisan route:clear, php artisan cache:clear.
+Code ajusté
+
+Correction de la détection du sous‑domaine pour ignorer le port:
+app/Providers/AppServiceProvider.php → Request::macro('subdomain') passe de getHttpHost() à getHost().
+Apache (XAMPP)
+
+Activation des vhosts et écoute du port 8005:
+C:\xampp\apache\conf\httpd.conf: Listen 8005, ServerName localhost:8005, Include conf/extra/httpd-vhosts.conf.
+VirtualHost du projet:
+C:\xampp\apache\conf\extra\httpd-vhosts.conf:
+<VirtualHost *:8005>
+ServerAlias larochelle.localhost
+DocumentRoot "C:/Users/BenjaminGalliot/Desktop/Applicationweb/pre-prod/agregateur-preprod/agregateur-preprod/public"
+AllowOverride All
+Redémarrage d’Apache après modification.
+
+
+Ancien README : 
+
 
 ## About
 
