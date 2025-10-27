@@ -1,0 +1,229 @@
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@600&family=Space+Grotesk:wght@300;400;700&display=swap');
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Bold.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-BoldItalic.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Regular.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Italic.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Bold.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-BoldItalic.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Italic.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Regular.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Italic.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Bold.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-BoldItalic.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Regular.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-BoldItalic.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-BoldItalic.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Regular.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Bold.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url('/fonts/AtkinsonHyperlegible-Italic.woff2') format('woff2'),
+    url('/fonts/AtkinsonHyperlegible-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskExtraLightRegular.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskExtraLightRegular.woff') format('woff');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskLightRegular.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskLightRegular.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskRegular.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskRegular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskExtraBoldRegular.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskExtraBoldRegular.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskMediumRegular.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskMediumRegular.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskThinRegular.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskThinRegular.woff') format('woff');
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskHeavyRegular.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskHeavyRegular.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskBold.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskBold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Roc Grotesk';
+    src: url('/fonts/grotesk/RocGroteskBlackRegular.woff2') format('woff2'),
+    url('/fonts/grotesk/RocGroteskBlackRegular.woff') format('woff');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+

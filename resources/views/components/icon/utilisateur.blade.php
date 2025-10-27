@@ -1,0 +1,4 @@
+<svg   viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" {{ $attributes }}>
+<path d="M12 10.5C13.933 10.5 15.5 8.933 15.5 7C15.5 5.06701 13.933 3.5 12 3.5C10.067 3.5 8.5 5.06701 8.5 7C8.5 8.933 10.067 10.5 12 10.5Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.00046 20.5C6.73466 20.5 6.48085 20.395 6.29349 20.2078C6.10614 20.0205 6.00092 19.7659 6 19.5016C6.00185 19.5008 6.00184 19.5007 6.00184 19.4999C6.00184 16.3612 8.68574 13.5 11.9963 13.5C15.3069 13.5 18 16.3612 18 19.4999C18 19.765 17.8948 20.0196 17.7074 20.2078C17.5201 20.395 17.2653 20.5 17.0005 20.5C14.7227 20.5 9.21827 20.5 7.00046 20.5Z" stroke="currentColor" stroke-width="1.5" stroke-miterlimit="1.5" stroke-linejoin="round"/>
+</svg>

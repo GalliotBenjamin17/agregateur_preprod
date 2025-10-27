@@ -1,0 +1,12 @@
+<x-app-contributors-2
+    :tenant="$tenant"
+    :organization="$organization"
+    :blank-layout="true"
+>
+    <livewire:interface.forms.donation-choice-form
+        :tenant="$tenant"
+        :amount="$amount"
+        :projectId="$projectId"
+        :wpPageId="$wpPageId"
+    />
+</x-app-contributors-2>

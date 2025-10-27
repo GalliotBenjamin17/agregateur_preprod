@@ -1,0 +1,288 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    font-family: 'Figtree';
+    font-size: 100%;
+}
+
+.fi-ta-ctn{
+    border-radius: 5px;
+}
+
+legend {
+    @apply bg-white dark:bg-transparent px-1
+}
+
+.fi-ta-without-corner .fi-ta-ctn {
+    border-radius: 0px !important;
+    box-shadow: none !important;
+}
+
+.fi-ta-top-without-corner .fi-ta-ctn {
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    box-shadow: none !important;
+}
+
+.fi-ta-thin .fi-ta-text {
+    @apply py-2
+}
+
+.fi-ta-thin .fi-ta-header-cell {
+    @apply first:!ps-[0.75rem] px-0
+}
+
+.fi-ta-extra-thin .fi-ta-text {
+    @apply py-1.5 px-0.5
+}
+
+.fi-ta-extra-thin .fi-ta-header-cell {
+    @apply first:!ps-[0.75rem] px-0
+}
+
+
+option {
+    -webkit-font-family: 'Figtree', fallback-font, sans-serif;
+    -moz-font-family: 'Figtree', fallback-font, sans-serif;
+    font-family: 'Figtree', fallback-font, sans-serif;
+}
+
+.filament-forms-select-component select option {
+    font-family: 'Figtree', fallback-font, sans-serif;
+}
+
+body {
+    color: rgb(24, 24, 24);
+}
+
+.button-group {
+    height: 32px;
+}
+
+.z-60 {
+    z-index: 60;
+}
+
+.bg-success {
+    background-color: #2ea44f;
+}
+
+.bg-success:hover {
+    background-color: #2c974b;
+}
+
+.border-gh {
+    border-color: rgba(27, 31, 35, 0.25);
+}
+
+.border-gh:hover {
+    border-color: rgba(27, 31, 35, 0.25);
+}
+
+.button-group .button {
+    border-radius: 0;
+}
+
+.button-group *:first-child {
+    @apply rounded-l-md;
+}
+
+.button-group *:not(:first-child) {
+    margin-left: -1px;
+}
+
+.button-group *:last-child {
+    @apply rounded-r-md;
+}
+
+.button-group input {
+    border-bottom-left-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+}
+
+.no-select {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+}
+
+*,
+*:focus-visible {
+    outline: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-scrollbar-corner { background: rgba(0,0,0,0.5); }
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #c5c5c5 #f6f6f6;
+}
+
+/* Works on Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #f6f6f6;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #c5c5c5;
+    border-radius: 20px;
+    border: 3px solid #f6f6f6;
+}
+
+@keyframes highlight {
+    0% {
+        background-position: 100% 100%
+    }
+    to {
+        background-position: 0 100%
+    }
+}
+
+.highlight-yellow {
+    background: linear-gradient(90deg, #ffe598 50%, #fff 0);
+    background-size: 200% 100%;
+    background-position: 100% 100%;
+    animation: highlight .5s ease-out 1s forwards;
+    border-radius: 5px;
+    padding-right: 3px;
+    padding-left: 3px;
+}
+
+@keyframes sub-line-highlight {
+    0% {
+        width: 0px;
+    }
+    to {
+        width: 135px;
+    }
+}
+
+.sub-line {
+    display: block;
+    height: 6px;
+    width: 0px;
+    margin-top: 16px;
+    background-color: #404040;
+    border-radius: 6px 0 6px 0;
+    animation: sub-line-highlight .5s ease-out 1s forwards;
+}
+
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 50;
+    overflow: hidden;
+    background-color: rgba(31, 41, 55, 1);
+    opacity: .8;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.link {
+    @apply text-[#0176D3] hover:text-blue-600 hover:underline;
+}
+
+.offcanvas-size-xxl {
+    --bs-offcanvas-width: min(95vw, 90vw) !important;
+}
+
+.offcanvas-size-xl {
+    --bs-offcanvas-width: min(95vw, 60vw) !important;
+}
+
+.offcanvas-size-lg {
+    --bs-offcanvas-width: min(95vw, 600px) !important;
+}
+
+.offcanvas-size-md { /* add Responsivenes to default offcanvas */
+    --bs-offcanvas-width: min(95vw, 400px) !important;
+}
+
+.offcanvas-size-sm {
+    --bs-offcanvas-width: min(95vw, 250px) !important;
+}
+
+.details-page-main {
+    @apply grid grid-cols-1 md:grid-cols-12 gap-2 sm:gap-3
+}
+
+.details-page-card {
+    @apply bg-white rounded-md border border-gray-300 p-2.5 sm:p-[1rem]
+}
+
+.badge-thin {
+    @apply inline-flex items-center gap-x-1.5 rounded-md px-2 py-0.5 text-xs font-medium text-gray-900 ring-1 ring-inset ring-gray-200
+}
+
+.faq {
+    --color-faq: #244999;
+}
+
+.faq__item {
+    margin-top: 1rem;
+    display: flex;
+}
+
+.faq__item__question {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    border-left-width: 4px;
+    border-left-color: var(--color-faq);
+}
+
+.faq__item__question span {
+    font-size: 2.25rem;
+    color: var(--color-faq);
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.faq__item__response {
+    align-items: center;
+    height: 4rem;
+    border-left-width: 4px;
+    border-left-color: #d1d5db;
+}
+
+.faq__item__response span {
+    font-size: 2.25rem;
+    color: #d1d5db;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.faq__title {
+    display: flex;
+    align-items: center;
+    height: 4rem;
+    font-size: 1.25rem;
+    color: var(--color-faq);
+    font-weight: bold;
+}
+
+.faq__content {
+    display: flex;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
