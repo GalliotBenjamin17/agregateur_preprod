@@ -1,6 +1,12 @@
 # README
 # Guide d’installation locale — Application Agregateur
 
+Pour ajouter un fichier : git add nom_du_fichier OU git add . pour ajouter tous les fichiers nouveaux
+
+Pour ajouter un commit : git commit -m "Description du commit"
+
+Pour push : git push
+
 ## Récupérer le projet
 git clone <URL_DU_DEPOT> agregateur
 cd agregateur
