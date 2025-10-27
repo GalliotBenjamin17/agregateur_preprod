@@ -13,15 +13,14 @@ APP_NAME=Laravel
 APP_ENV=local
 APP_KEY=base64:t0gLwwgAXMnGbQVJXvPF60vFoTguz3ybGpZhYkkSwks=
 APP_DEBUG=true
-# Use a full URL with scheme to avoid bad redirects / asset URLs
 APP_URL=http://localhost:8005
-# Public base host used for tenant subdomains in local
 DISPLAYED_APP_URL=localhost
 
 ## Installer les dépendances
 composer install
 npm install
 
+## Autres
 Voici le récap précis des actions et réglages qui ont permis de faire fonctionner l’accès et la redirection vers l’interface contributeur.
 
 Changements .env
