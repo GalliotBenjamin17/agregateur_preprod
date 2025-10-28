@@ -63,6 +63,7 @@ class Project extends Model
         'revenues' => 'array',
         'is_synchronized_with_parent' => 'boolean',
         'plantation_at' => 'date',
+        'planned_audit_year'=> 'date',
     ];
 
     public static function boot()

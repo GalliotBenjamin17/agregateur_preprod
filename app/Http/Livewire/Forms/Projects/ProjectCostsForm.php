@@ -22,6 +22,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
@@ -351,11 +352,13 @@ class ProjectCostsForm extends Component implements HasActions, HasForms
                             Toggle::make('project.is_audit_done')
                                 ->label("L'audit a-t-il été réalisé ?")
                                 ->helperText("Cette information permet d'ajuster le calcul du risque."),
-
-                            TextInput::make('project.planned_audit_year')
-                                ->integer()
-                                ->required()
-                                ->label("Année prévisionnelle d'audit"),
+                            
+                            DatePicker::make('project.planned_audit_year')
+                                    ->label("Date prévisionnel d'audit")
+                                    ->native(false)
+                                    ->displayFormat('Y-m-d')
+                                    ->closeOnDateSelection()
+                                    ->nullable(),
 
                         ]),
 
