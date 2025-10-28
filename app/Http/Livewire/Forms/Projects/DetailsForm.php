@@ -158,7 +158,23 @@ class DetailsForm extends Component implements HasActions, HasForms
                                     ->nullable(),
                         ]),
 
+                    Fieldset::make()
+                        ->label("Information sur l'audit")
+                        ->disabled($this->project->hasFormFieldsDisabled())
+                        ->schema([
 
+                            Toggle::make('project.is_audit_done')
+                                ->label("L'audit a-t-il été réalisé ?")
+                                ->helperText("Cette information permet d'ajuster le calcul du risque."),
+                            
+                            DatePicker::make('project.planned_audit_year')
+                                    ->label("Date prévisionnel d'audit")
+                                    ->native(false)
+                                    ->displayFormat('Y-m-d')
+                                    ->closeOnDateSelection()
+                                    ->nullable(),
+
+                        ]),
 
                     Fieldset::make('project_management')
                         ->label('Visibilité / synchronisation projet')

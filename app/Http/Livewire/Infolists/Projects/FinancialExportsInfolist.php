@@ -81,9 +81,9 @@ class FinancialExportsInfolist extends Component implements HasForms, HasInfolis
             ->columns(3)
             ->schema([
 
-                TextEntry::make('id')
-                    ->formatStateUsing(fn () => $this->project->getPlannedAuditYear())
-                    ->label("Année prévisionnelle d'audit"),
+                TextEntry::make('planned_audit_year')
+                    ->date('Y-m-d') // affiche 2027-01-01
+                    ->label("Date prévisionnelle d'audit"),
 
                 TextEntry::make('id')
                     ->formatStateUsing(fn () => format($this->project->getDonations(mode: 'HT')).' € HT')

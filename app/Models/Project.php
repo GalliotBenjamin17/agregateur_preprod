@@ -63,7 +63,6 @@ class Project extends Model
         'revenues' => 'array',
         'is_synchronized_with_parent' => 'boolean',
         'plantation_at' => 'date',
-        'planned_audit_year'=> 'date',
     ];
 
     public static function boot()
@@ -290,7 +289,7 @@ class Project extends Model
     /**
      * Année prévisionnelle d'audit
      */
-    public function getPlannedAuditYear(): float
+    public function getPlannedAuditYear(): string
     {
         if ($this->planned_audit_year) {
             return $this->planned_audit_year;
