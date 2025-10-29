@@ -253,11 +253,17 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
                     'Nom de l’organisation','Total contributions TTC €','Total contributions HT €','Email de facturation',
                     'SIRET','SIREN','Raison sociale','Code activité','Date de création','Sociétaire','Représentants',
                     'Email (générique)','Téléphone',
-                    'Nom 1','Email 1','Téléphone 1','Nom 2','Email 2','Téléphone 2','Nom 3','Email 3','Téléphone 3',
+                    'Représentant 1 - Nom','Représentant 1 - Prénom','Représentant 1 - Email','Représentant 1 - Téléphone',
+                    'Représentant 2 - Nom','Représentant 2 - Prénom','Représentant 2 - Email','Représentant 2 - Téléphone',
+                    'Représentant 3 - Nom','Représentant 3 - Prénom','Représentant 3 - Email','Représentant 3 - Téléphone',
+                    'Représentant 4 - Nom','Représentant 4 - Prénom','Représentant 4 - Email','Représentant 4 - Téléphone',
+                    'Représentant 5 - Nom','Représentant 5 - Prénom','Représentant 5 - Email','Représentant 5 - Téléphone',
+                    'Annuaire : Nom 1','Annuaire Email 1','Annuaire Téléphone 1','Annuaire Nom 2',' Annuaire Email 2',' Annuaire Téléphone 2',' Annuaire Nom 3','Annuaire Email 3','Annuaire Téléphone 3',
                 ];
             }
             public function map($row): array {
                 $name = null; $billingEmail = null; $siret = null; $siren = null; $legalName = null; $activity = null; $createdAt = null; $isSoc = null; $reps = null; $contactEmail = null; $contactPhone = null; $contacts = [];
+                $representatives = [];
                 $related = $row->related;
                 if ($related) {
                     if ($related instanceof Organization) {
@@ -270,6 +276,14 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
                         $createdAt = $related->legal_created_at ?? null;
                         $isSoc = $related->is_shareholder ? 'Oui' : 'Non';
                         $reps = optional($related->users)->map(fn($u) => trim(($u->first_name ?? '').' '.($u->last_name ?? '')))->filter()->unique()->join(', ');
+                        $representatives = optional($related->users)->map(function($u){
+                            return [
+                                'last_name' => $u->last_name ?? null,
+                                'first_name' => $u->first_name ?? null,
+                                'email' => $u->email ?? null,
+                                'phone' => $u->phone ?? null,
+                            ];
+                        })->values()->all() ?? [];
                         $contactEmail = $related->contact_email ?? null;
                         $contactPhone = $related->contact_phone ?? null;
                         $contacts = is_array($related->contacts) ? array_values($related->contacts) : [];
@@ -286,6 +300,14 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
                     $donations = Donation::query()->where('related_type', get_class($related))->where('related_id', $related->id)->get(['amount']);
                     $totalTtc = (float) $donations->sum('amount');
                     $totalHt = TVAHelper::getHT($totalTtc);
+                }
+                $repFlat = [];
+                for ($i = 0; $i < 5; $i++) {
+                    $r = $representatives[$i] ?? ['last_name'=>null,'first_name'=>null,'email'=>null,'phone'=>null];
+                    $repFlat[] = $r['last_name'];
+                    $repFlat[] = $r['first_name'];
+                    $repFlat[] = $r['email'];
+                    $repFlat[] = $r['phone'];
                 }
                 $flat = [];
                 for ($i = 0; $i < 3; $i++) {
@@ -317,7 +339,7 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
                     $reps,
                     $contactEmail,
                     $contactPhone,
-                ], $flat);
+                ], $repFlat, $flat);
             }
             public function columnFormats(): array { return [ 'E' => NumberFormat::FORMAT_CURRENCY_EUR, 'F' => NumberFormat::FORMAT_CURRENCY_EUR ]; }
             public function title(): string { return 'Financeurs'; }
