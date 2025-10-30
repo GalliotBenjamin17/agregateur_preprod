@@ -10,6 +10,7 @@ class UserTablePreference extends Model
         'user_id',
         'table_key',
         'toggled_columns',
+        'saved_filters',
     ];
 
     protected $casts = [
