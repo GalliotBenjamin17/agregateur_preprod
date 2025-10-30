@@ -5,6 +5,8 @@ namespace App\Providers;
 use Filament\Forms\Components\FileUpload;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentView;
+use Filament\Tables\View\TablesRenderHook;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -69,6 +71,12 @@ class AppServiceProvider extends ServiceProvider
             'success' => Color::Green,
             'warning' => Color::Amber,
         ]);
+
+        // Register a reset-filters button next to the Columns toggle in tables toolbar
+        FilamentView::registerRenderHook(
+            TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER,
+            fn () => view('components.tables.reset-filters-button')
+        );
 
         require_once app_path('helpers.php');
     }
