@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Livewire\Forms\Projects;
 
 use App\Enums\Roles;
@@ -248,67 +247,7 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 ->placeholder('Lyon')
                                 ->preload(),
 
-                        ]),
-
-                    Fieldset::make('informations')
-                        ->label('Certification & instance locale')
-                        ->disabled($this->project->hasFormFieldsDisabled())
-                        ->schema([
-                            Select::make('project.tenant_id')
-                                ->label('Instance locale')
-                                ->searchable()
-                                ->placeholder('Projet national')
-                                ->disabled($this->project->hasParent())
-                                ->helperText($this->project->hasParent() ? 'Vous pouvez modifier cette information sur le projet parent.' : null)
-                                ->options($this->tenants),
-
-                            Select::make('project.certification_id')
-                                ->label('Certification')
-                                ->searchable()
-                                ->disabled($this->project->hasParent())
-                                ->helperText($this->project->hasParent() ? 'Vous pouvez modifier cette information sur le projet parent.' : null)
-                                ->options(function (\Filament\Forms\Get $get) {
-                                    return Certification::select(['id', 'name', 'tenant_id'])
-                                        ->whereNull('tenant_id')
-                                        ->orWhere('tenant_id', $get('project.tenant_id'))
-                                        ->get()
-                                        ->pluck('name', 'id')
-                                        ->toArray();
-                                }),
-
-                            Select::make('project.segmentation_id')
-                                ->label('Segmentation')
-                                ->disabled($this->project->hasParent())
-                                ->required(! $this->project->hasParent())
-                                ->helperText($this->project->hasParent() ? 'Vous pouvez modifier cette information sur le projet parent.' : null)
-                                ->searchable()
-                                ->options($this->segmentations),
-                            Select::make('project.method_form_id')
-                                ->label('Méthode')
-                                ->searchable()
-                                ->reactive()
-                                ->hidden($this->project->hasParent())
-                                ->disabled(! is_null($this->project->method_form_id))
-                                ->helperText(! is_null($this->project->method_form_id) ? 'Vous avez déjà modifier au moins un élément de la méthode. Supprimer la méthode pour la modifier.' : 'La liste des méthodes dépend de la segmentation sélectionnée.')
-                                ->options(function (\Filament\Forms\Get $get) {
-                                    // Récupérer d'abord les IDs des méthodes actives depuis method_form_groups
-                                    $activeMethodFormIds = \App\Models\MethodFormGroup::where('segmentation_id', $get('project.segmentation_id'))
-                                        ->pluck('active_method_form_id')
-                                        ->toArray();
-                                    
-                                    // Inclure toujours l'ID de la méthode actuelle si elle existe
-                                    if (!is_null($this->project->method_form_id)) {
-                                        $activeMethodFormIds[] = $this->project->method_form_id;
-                                    }
-                                    // Récupérer les méthodes dont l'ID est dans $activeMethodFormIds
-                                    return \App\Models\MethodForm::whereIn('id', $activeMethodFormIds)
-                                        ->pluck('name', 'id')
-                                        ->toArray();
-                                
-                                
-                                }),
-                        ]),
-
+                        ]),
                     Fieldset::make('illustrations')
                         ->label('Illustrations')
                         ->schema([

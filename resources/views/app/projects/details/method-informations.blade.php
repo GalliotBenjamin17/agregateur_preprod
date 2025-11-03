@@ -2,6 +2,9 @@
     :project="$project"
 >
     <x-slot name="fullContent">
+        <div class="mb-6">
+            <livewire:forms.projects.certification-tenant-form :project="$project" />
+        </div>
         @if($project->hasParent())
             <x-files-component :model="$project" />
         @elseif($project->hasMethodForm())
