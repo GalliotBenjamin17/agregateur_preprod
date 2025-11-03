@@ -7,7 +7,7 @@ use App\Models\MethodForm;
 use App\Models\Project;
 use App\States\Certification\Notified;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\RichEditor;
@@ -107,23 +107,50 @@ class MethodFormRepliesForm extends Component implements HasForms
                 };
             };
 
-            return Fieldset::make(\Str::slug($field['section_title']))
+            // Compute a clean, human description: hide if it looks like a UUID
+            $rawDescription = Arr::get($field, 'description', '');
+            $safeDescription = is_string($rawDescription) ? trim($rawDescription) : '';
+            $looksLikeUuid = false;
+            if ($safeDescription !== '') {
+                $looksLikeUuid = (
+                    preg_match('/^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/', $safeDescription) === 1
+                ) || (
+                    preg_match('/^[0-9a-fA-F]{8}\s[0-9a-fA-F]{4}\s[0-9a-fA-F]{4}\s[0-9a-fA-F]{4}\s[0-9a-fA-F]{12}$/', $safeDescription) === 1
+                );
+            }
+
+            return Section::make(Arr::get(config('values.states.certification.name'), $field['certification_state']).' / '.$field['section_title'])
+                ->id($field['section_id'] ?? Str::slug($field['section_title']))
+                ->heading(Arr::get(config('values.states.certification.name'), $field['certification_state']).' / '.$field['section_title'])
                 ->disabled(! request()->user()->hasRole([Roles::Admin, Roles::LocalAdmin]))
                 ->visible(\Arr::get(config('values.states.certification.ranks'), $field['certification_state']) <= $this->project->certification_state->rank())
-                ->label(\Arr::get(config('values.states.certification.name'), $field['certification_state']).' / '.$field['section_title'])
-                ->schema(function () use ($field, $checkVisibility) {
+                ->collapsible()
+                ->collapsed()
+                ->schema(function () use ($field, $checkVisibility, $safeDescription, $looksLikeUuid) {
                     return array_merge([
                         Placeholder::make('description')
                             ->hiddenLabel()
                             ->columnSpanFull()
-                            ->visible(Arr::has($field, 'description'))
-                            ->content(
-                                new HtmlString("<span class='font-semibold'>Information : </span><span class='italic'>".Arr::get($field, 'description', '').'</span>')
-                            ),
+                            ->visible($safeDescription !== '' && ! $looksLikeUuid)
+                            ->content(new HtmlString("<span class='font-semibold'>Information : </span><span class='italic'>".$safeDescription.'</span>')),
                     ], array_map(function ($row) use ($checkVisibility) {
+                        $label = trim((string) ($row['data']['label'] ?? ''));
+                        $isUuid = function (string $v): bool {
+                            return preg_match('/^[0-9a-fA-F]{8}([-\s])[0-9a-fA-F]{4}\1[0-9a-fA-F]{4}\1[0-9a-fA-F]{4}\1[0-9a-fA-F]{12}$/', $v) === 1;
+                        };
+                        if ($label === '' || $isUuid($label)) {
+                            $desc = trim((string) ($row['data']['description'] ?? ''));
+                            if ($desc !== '' && ! $isUuid($desc)) {
+                                $label = $desc;
+                            }
+                        }
+                        if ($label === '' || $isUuid($label)) {
+                            $label = Str::headline((string) ($row['type'] ?? 'Champ'));
+                        }
                         return match ($row['type']) {
                             'input' => TextInput::make('data.'.$row['data']['id'])
-                                ->label($row['data']['label'])
+                                ->label($label)
+                                
                                 ->disabled($this->project->certification_state->rank() >= config('values.states.certification.ranks.verified'))
                                 ->helperText($row['data']['description'])
                                 ->visible(function (Get $get) use ($checkVisibility, $row) {
@@ -133,7 +160,8 @@ class MethodFormRepliesForm extends Component implements HasForms
                                 ->required($row['data']['required']),
 
                             'input_numeric' => TextInput::make('data.'.$row['data']['id'])
-                                ->label($row['data']['label'])
+                                ->label($label)
+                                
                                 ->numeric()
                                 ->disabled($this->project->certification_state->rank() >= config('values.states.certification.ranks.verified'))
                                 ->helperText($row['data']['description'])
@@ -144,7 +172,8 @@ class MethodFormRepliesForm extends Component implements HasForms
                                 ->required($row['data']['required']),
 
                             'checkbox' => Toggle::make('data.'.$row['data']['id'])
-                                ->label($row['data']['label'])
+                                ->label($label)
+                                
                                 ->inline(false)
                                 ->disabled($this->project->certification_state->rank() >= config('values.states.certification.ranks.verified'))
                                 ->helperText($row['data']['description'])
@@ -155,7 +184,8 @@ class MethodFormRepliesForm extends Component implements HasForms
                                 ->required($row['data']['required']),
 
                             'date' => DatePicker::make('data.'.$row['data']['id'])
-                                ->label($row['data']['label'])
+                                ->label($label)
+                                
                                 ->disabled($this->project->certification_state->rank() >= config('values.states.certification.ranks.verified'))
                                 ->helperText($row['data']['description'])
                                 ->displayFormat('d/m/Y')
@@ -166,7 +196,8 @@ class MethodFormRepliesForm extends Component implements HasForms
                                 ->required($row['data']['required']),
 
                             'select' => Select::make('data.'.$row['data']['id'])
-                                ->label($row['data']['label'])
+                                ->label($label)
+                                
                                 ->disabled($this->project->certification_state->rank() >= config('values.states.certification.ranks.verified'))
                                 ->options($row['data']['choices'])
                                 ->multiple($row['data']['multiple'])
@@ -178,7 +209,8 @@ class MethodFormRepliesForm extends Component implements HasForms
                                 ->reactive(),
 
                             'richtext' => RichEditor::make('data.'.$row['data']['id'])
-                                ->label($row['data']['label'])
+                                ->label($label)
+                                
                                 ->columnSpanFull()
                                 ->disabled($this->project->certification_state->rank() >= config('values.states.certification.ranks.verified'))
                                 ->helperText($row['data']['description'])
@@ -203,7 +235,8 @@ class MethodFormRepliesForm extends Component implements HasForms
                                 ->required($row['data']['required']),
 
                             'file' => FileUpload::make('data.'.$row['data']['id'])
-                                ->label($row['data']['label'])
+                                ->label($label)
+                                
                                 ->visibility('public')
                                 ->disabled($this->project->certification_state->rank() >= config('values.states.certification.ranks.verified'))
                                 ->preserveFilenames()
