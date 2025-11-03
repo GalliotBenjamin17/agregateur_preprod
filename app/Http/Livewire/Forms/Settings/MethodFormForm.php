@@ -557,19 +557,37 @@ class MethodFormForm extends Component implements HasForms
         $ids = [];
 
         foreach ($skeleton as &$section) {
-            if (in_array($section['section_id'], $ids)) {
-                $section['section_id'] = Str::orderedUuid()->toString();
+            // Ensure section_id exists; generate if missing or duplicated
+            $currentSectionId = $section['section_id'] ?? null;
+            if (! $currentSectionId || in_array($currentSectionId, $ids, true)) {
+                $currentSectionId = Str::orderedUuid()->toString();
+                $section['section_id'] = $currentSectionId;
             }
 
-            foreach ($section['content'] as &$field) {
-                if (in_array($field['data']['id'], $ids)) {
-                    $field['data']['id'] = Str::orderedUuid()->toString();
+            // Ensure content is an array to iterate safely
+            $content = $section['content'] ?? [];
+            if (! is_array($content)) {
+                $content = [];
+            }
+
+            foreach ($content as $index => $field) {
+                // Ensure nested keys exist
+                $fieldData = $field['data'] ?? [];
+                $fieldId = $fieldData['id'] ?? null;
+
+                if (! $fieldId || in_array($fieldId, $ids, true)) {
+                    $fieldId = Str::orderedUuid()->toString();
+                    $fieldData['id'] = $fieldId;
                 }
 
-                $ids[] = $field['data']['id'];
+                // Persist potential fixes back to section content
+                $field['data'] = $fieldData;
+                $section['content'][$index] = $field;
+
+                $ids[] = $fieldId;
             }
 
-            $ids[] = $section['section_id'];
+            $ids[] = $currentSectionId;
         }
 
         return $skeleton;

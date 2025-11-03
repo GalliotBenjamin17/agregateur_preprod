@@ -292,12 +292,6 @@ class IndexTable extends Component implements HasForms, HasTable
                         default => 'Type de porteur inconnu'
                     };
                 })->toggleable(),
-            TextColumn::make('auditor.name')
-                ->default('-')
-                ->label('Auditeur')->toggleable(),
-            TextColumn::make('referent.name')
-                ->default('-')
-                ->label('Réfèrent')->toggleable(),
 
             TextColumn::make('id')
                 ->formatStateUsing(function (Project $record) {
@@ -329,30 +323,17 @@ class IndexTable extends Component implements HasForms, HasTable
                     return "Planter: " . $record->created_at->format('d/m/Y');
                 })
                 ->sortable(['plantation_at'])->toggleable(),
-        ];
-    }
-
-
-    protected function getTableBulkActions(): array
-    {
-        return [
-            BulkAction::make('synchronize')
-                ->label('Synchroniser avec le projet parent')
-                ->deselectRecordsAfterCompletion()
-                ->requiresConfirmation()
-                ->action(function (Collection $records) {
-                    if ($records->count() == 0) {
-                        return;
-                    }
-
-                    $records->toQuery()->update([
-                        'is_synchronized_with_parent' => true
-                    ]);
-
-                    defaultSuccessNotification("Tous les projets sélectionnés sont maintenant synchronisés.");
+            TextColumn::make('planned_audit_year')
+                ->label('Date audit')
+                ->formatStateUsing(function (Project $record): ?string {
+                    return "Audit : " . $record->created_at->format('d/m/Y');
                 })
+                ->sortable(['planned_audit_year'])->toggleable(),
+
         ];
     }
+
+
 
     protected function getTableHeaderActions(): array { return []; }
 
