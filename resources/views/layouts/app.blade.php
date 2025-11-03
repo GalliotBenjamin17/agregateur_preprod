@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="fr-FR" class="h-full">
 <head>
     <meta charset="utf-8">
@@ -48,6 +47,8 @@
     @isset($modals)
         {{ $modals }}
     @endisset
+
+    @stack('modals')
 
     <x-modal id="menu" size="lg">
         <x-modal.header>

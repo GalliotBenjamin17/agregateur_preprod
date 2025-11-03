@@ -19,6 +19,23 @@ class GetOrganizationsController extends Controller
     {
         //Load on conditions
         $organizationsQuery = Organization::query()
+            ->select([
+                'id',
+                'name',
+                'slug',
+                'avatar',
+                'description',
+                'organization_type_id',
+                'address_1',
+                'address_postal_code',
+                'address_city',
+                'organization_parent_id',
+                'tenant_id',
+                'can_be_displayed_on_website',
+                'is_shareholder',
+                'created_at',
+                'updated_at'
+            ])
             ->when($request->has('tenant'), function ($query) use ($request) {
                 return $query->where('tenant_id', $request->get('tenant'));
             })

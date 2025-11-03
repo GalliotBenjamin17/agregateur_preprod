@@ -318,16 +318,20 @@ class IndexTable extends Component implements HasForms, HasTable
                 ->label('Reste à financer (TTC)')->toggleable(),
 
             TextColumn::make('created_at')
-                ->label('Démarrage et dépôt')
+                ->label('Date de création')
                 ->formatStateUsing(function (Project $record): ?string {
-                    return "Démarrage : " . $record->created_at->format('d/m/Y');
-                })
-                ->description(function (Model $record): ?string {
-                    return 'Dépôt le '.$record->created_at->format('d/m/Y');
+                    return "Créer: " . $record->created_at->format('d/m/Y');
                 })
                 ->sortable(['created_at'])->toggleable(),
+            TextColumn::make('plantation_at')
+                ->label('Date de plantation')
+                ->formatStateUsing(function (Project $record): ?string {
+                    return "Planter: " . $record->created_at->format('d/m/Y');
+                })
+                ->sortable(['plantation_at'])->toggleable(),
         ];
     }
+
 
     protected function getTableBulkActions(): array
     {

@@ -1,6 +1,10 @@
+@php
+    $addCommentModalId = 'add_comment_' . $model->getKey();
+@endphp
+
 <x-layouts.card
-    group-name="Commentaires"
-    name="Tous les commentaires"
+    group-name=""
+    name="Commentaires"
     :thin-padding="true"
 >
     <x-slot:icon>
@@ -8,7 +12,7 @@
     </x-slot:icon>
 
     <x-slot:actions>
-        <x-button type="default" data-bs-toggle="modal" data-bs-target="#add_comment">
+        <x-button type="default" data-bs-toggle="modal" data-bs-target="#{{ $addCommentModalId }}">
             Ajouter
         </x-button>
     </x-slot:actions>
@@ -22,7 +26,10 @@
                             <div class="flex items-center justify-between">
                                 <p class="text-sm text-gray-800">{{ $comment->content }}</p>
                             </div>
-                            <p class="text-[13px] text-gray-500">@datetime($comment->created_at, capitalized:true) par {{ $comment->createdBy?->name ?? 'une personne inconnue' }}</p>
+                            <p class="text-[13px] text-gray-500">
+                                @datetime($comment->created_at, capitalized:true)
+                                par {{ $comment->createdBy?->name ?? 'une personne inconnue' }}
+                            </p>
                         </div>
                     </div>
                     <div class="flex items-center space-x-2 hidden group-hover:absolute group-hover:right-5 group-hover:block">
@@ -44,18 +51,20 @@
             @endforelse
         </ul>
     </div>
+</x-layouts.card>
 
-    <x-modal id="add_comment">
+@push('modals')
+    <x-modal id="{{ $addCommentModalId }}">
         <x-modal.header>
             <div>
                 <div class="font-semibold text-gray-700">
                     Ajout d'un commentaire
                 </div>
             </div>
-            <x-modal.close-button/>
+            <x-modal.close-button />
         </x-modal.header>
 
-        <form autocomplete="off" action="{{ route('comments.store') }}" method="POST" enctype='multipart/form-data'>
+        <form autocomplete="off" action="{{ route('comments.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <input class="hidden" name="related_id" value="{{ $model->id }}">
             <input class="hidden" name="related_type" value="{{ get_class($model) }}">
@@ -85,10 +94,10 @@
                         Modification du commentaire
                     </div>
                 </div>
-                <x-modal.close-button/>
+                <x-modal.close-button />
             </x-modal.header>
 
-            <form autocomplete="off" action="{{ route('comments.update', ['comment' => $comment->id]) }}" method="POST" enctype='multipart/form-data'>
+            <form autocomplete="off" action="{{ route('comments.update', ['comment' => $comment->id]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <x-modal.body class="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-gray-300">
                     <div class="sm:col-span-2">
@@ -115,10 +124,10 @@
                         Confirmation de la suppression du commentaire
                     </div>
                 </div>
-                <x-modal.close-button/>
+                <x-modal.close-button />
             </x-modal.header>
 
-            <form autocomplete="off" action="{{ route('comments.delete', ['comment' => $comment->id]) }}" method="POST" enctype='multipart/form-data'>
+            <form autocomplete="off" action="{{ route('comments.delete', ['comment' => $comment->id]) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <x-modal.body class="border-t border-gray-300">
                     <p>
@@ -137,5 +146,4 @@
             </form>
         </x-modal>
     @endforeach
-</x-layouts.card>
-
+@endpush

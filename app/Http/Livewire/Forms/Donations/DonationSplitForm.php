@@ -86,7 +86,7 @@ class DonationSplitForm extends Component implements HasForms
                                         $available = 0;
                                     }
 
-                                    return new HtmlString("<span class='font-semibold'>Prix à la tonne :</span> ".format(TVAHelper::getTTC($price), 2)." € TTC.<br> <span class='font-semibold'>Reste à financer : </span>".format($available, 2).' € TTC.');
+                                    return new HtmlString("<span class='font-semibold'>Prix à la tonne :</span> " . format(TVAHelper::getTTC($price), 2) . " € TTC.<br> <span class='font-semibold'>Reste à financer : </span>" . format($available, 2) . ' € TTC.');
                                 })
                                 ->options($this->projects),
 
@@ -100,10 +100,10 @@ class DonationSplitForm extends Component implements HasForms
                                     $carbonEmission = $state / TVAHelper::getTTC($price ?? 1);
 
                                     if ($project && $state) {
-                                        return new HtmlString('<span class="font-semibold">Disponible après fléchage : </span>'.format($this->maximumAvailable - $state, 2).' € TTC <br><span class="font-semibold">tCO2 fléchage :</span> '.format($carbonEmission, 2).' tonnes.');
+                                        return new HtmlString('<span class="font-semibold">Disponible après fléchage : </span>' . format($this->maximumAvailable - $state, 2) . ' € TTC <br><span class="font-semibold">tCO2 fléchage :</span> ' . format($carbonEmission, 2) . ' tonnes.');
                                     }
 
-                                    return new HtmlString('<span class="font-semibold">Disponible contribution : </span>'.format($this->maximumAvailable, 2).' € TTC');
+                                    return new HtmlString('<span class="font-semibold">Disponible contribution : </span>' . format($this->maximumAvailable, 2) . ' € TTC');
                                 })
                                 ->reactive()
                                 ->maxValue($this->maximumAvailable)
@@ -120,58 +120,87 @@ class DonationSplitForm extends Component implements HasForms
                         ->columns(2)
                         ->icon('heroicon-s-document-text'),
 
-                    Builder\Block::make('sub_project')
-                        ->label('Fléchage sur un sous-projet')
-                        ->schema([
-                            Select::make('project_id')
-                                ->label('Projet')
-                                ->required()
-                                ->reactive()
-                                ->helperText(function ($state) {
-                                    $project = Project::with('activeCarbonPrice')->withSum('donationSplits', 'amount')->find($state);
-                                    $price = $project?->activeCarbonPrice->price;
-                                    $available = $project?->cost_global_ttc - $project?->donation_splits_sum_amount;
+                        Builder\Block::make('sub_project')
+                            ->label('Fléchage sur un sous-projet')
+                            ->schema([
+                                // 1) Sélection du PROJET PARENT (ne s’appelle plus project_id)
+                                Select::make('parent_project_id')
+                                    ->label('Projet parent')
+                                    ->required()
+                                    ->reactive()
+                                    ->searchable()
+                                    ->helperText(function ($state) {
+                                        $project = Project::with('activeCarbonPrice')->withSum('donationSplits', 'amount')->find($state);
+                                        $price = $project?->activeCarbonPrice->price;
+                                        $available = $project?->cost_global_ttc - $project?->donation_splits_sum_amount;
 
-                                    if (! $price) {
+                                        if (! $price) return '';
+
+                                        if ($available < 0) $available = 0;
+
+                                        return new HtmlString(
+                                            "<span class='font-semibold'>Prix à la tonne :</span> " . format($price, 2) . " € HT.<br>" .
+                                            "<span class='font-semibold'>Reste à financer : </span>" . format($available, 2) . ' € TTC.'
+                                        );
+                                    })
+                                    // (optionnel) lister uniquement les parents qui ont des sous-projets
+                                    ->options(
+                                        Project::select('id','name')
+                                            ->whereNull('parent_project_id')
+                                            ->has('childrenProjects')
+                                            ->orderBy('name')
+                                            ->pluck('name','id')
+                                            ->toArray()
+                                    ),
+
+                                // 2) Sélection du SOUS‑PROJET — NOTE : s’appelle maintenant project_id
+                                //    => c’est CET ID que l’helper utilisera pour créer le split
+                                Select::make('project_id')
+                                    ->label('Sous-projet')
+                                    ->required()
+                                    ->searchable()
+                                    ->visible(fn (\Filament\Forms\Get $get) => ! is_null($get('parent_project_id')))
+                                    ->reactive()
+                                    ->options(function (\Filament\Forms\Get $get) {
+                                        return Project::where('parent_project_id', $get('parent_project_id'))
+                                            ->withSum('donationSplits', 'amount')
+                                            ->get()
+                                            ->filter(function ($item) {
+                                                if (is_null($item->cost_global_ttc)) return false;
+                                                return $item->donation_splits_sum_amount < $item->cost_global_ttc;
+                                            })
+                                            ->pluck('name', 'id')
+                                            ->toArray();
+                                    })
+                                    ->helperText(function ($state) {
+                                        // $state = ID du sous-projet
+                                        $subProject = Project::with('activeCarbonPrice')
+                                            ->withSum('donationSplits', 'amount')
+                                            ->find($state);
+
+                                        if (! $subProject) return '';
+
+                                        $wantedTtc     = $subProject->cost_global_ttc;
+                                        $alreadyFunded = $subProject->donation_splits_sum_amount ?? 0;
+
+                                        if (! is_null($wantedTtc)) {
+                                            $available = max(0, $wantedTtc - $alreadyFunded);
+                                            return new HtmlString("<span class='font-semibold'>Reste à financer :</span> " . format($available, 2) . " € TTC.");
+                                        }
+
                                         return '';
-                                    }
+                                    }),
 
-                                    if ($available < 0) {
-                                        $available = 0;
-                                    }
+                                // 3) Montant
+                                TextInput::make('amount')
+                                    ->label('Montant TTC')
+                                    ->numeric()
+                                    ->maxValue($this->donation->amount)
+                                    ->required(),
+                            ])
+                            ->columns()
+                            ->icon('heroicon-s-document-duplicate'),
 
-                                    return new HtmlString("<span class='font-semibold'>Prix à la tonne :</span> ".format($price, 2)." € HT.<br> <span class='font-semibold'>Reste à financer : </span>".format($available, 2).' € TTC.');
-                                })
-                                ->searchable()
-                                ->options($this->projects),
-                            Select::make('sub_project_id')
-                                ->label('Sous-projet')
-                                ->required()
-                                ->searchable()
-                                ->visible(fn (\Filament\Forms\Get $get) => ! is_null($get('project_id')))
-                                ->options(function (\Filament\Forms\Get $get) {
-                                    return Project::where('parent_project_id', $get('project_id'))
-                                        ->withSum('donationSplits', 'amount')
-                                        ->get()
-                                        ->filter(function ($item) {
-                                            if (is_null($item->amount_wanted_ttc)) {
-                                                return false;
-                                            }
-
-                                            return $item->donation_splits_sum_amount < $item->amount_wanted_ttc;
-                                        })
-                                        ->pluck('name', 'id')
-                                        ->toArray();
-                                }),
-
-                            TextInput::make('amount')
-                                ->label('Montant TTC')
-                                ->numeric()
-                                ->maxValue($this->donation->amount)
-                                ->required(),
-                        ])
-                        ->columns()
-                        ->icon('heroicon-s-document-duplicate'),
 
                 ])
                 ->addActionLabel('Ajouter un fléchage')

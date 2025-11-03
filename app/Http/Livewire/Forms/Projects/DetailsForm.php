@@ -27,7 +27,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\DatePicker;
 use Filament\Actions\Contracts\HasActions;
 use App\Enums\Models\Projects\ProjectStateEnum;
 use App\Services\Features\AddressLookupService;
@@ -150,30 +149,6 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 })
                                 ->label('Référence DREAL')
                                 ->nullable(),
-                                DatePicker::make('project.plantation_at')
-                                    ->label('Date de plantation')
-                                    ->native(false)
-                                    ->displayFormat('Y-m-d')
-                                    ->closeOnDateSelection()
-                                    ->nullable(),
-                        ]),
-
-                    Fieldset::make()
-                        ->label("Information sur l'audit")
-                        ->disabled($this->project->hasFormFieldsDisabled())
-                        ->schema([
-
-                            Toggle::make('project.is_audit_done')
-                                ->label("L'audit a-t-il été réalisé ?")
-                                ->helperText("Cette information permet d'ajuster le calcul du risque."),
-                            
-                            DatePicker::make('project.planned_audit_year')
-                                    ->label("Date prévisionnel d'audit")
-                                    ->native(false)
-                                    ->displayFormat('Y-m-d')
-                                    ->closeOnDateSelection()
-                                    ->nullable(),
-
                         ]),
 
                     Fieldset::make('project_management')
@@ -308,7 +283,6 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 ->helperText($this->project->hasParent() ? 'Vous pouvez modifier cette information sur le projet parent.' : null)
                                 ->searchable()
                                 ->options($this->segmentations),
-
                             Select::make('project.method_form_id')
                                 ->label('Méthode')
                                 ->searchable()
@@ -317,12 +291,21 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 ->disabled(! is_null($this->project->method_form_id))
                                 ->helperText(! is_null($this->project->method_form_id) ? 'Vous avez déjà modifier au moins un élément de la méthode. Supprimer la méthode pour la modifier.' : 'La liste des méthodes dépend de la segmentation sélectionnée.')
                                 ->options(function (\Filament\Forms\Get $get) {
-                                    return MethodForm::select(['id', 'name', 'method_form_group_id'])
-                                        ->whereRelation('methodFormGroup', 'segmentation_id', '=', $get('project.segmentation_id'))
-                                        ->orWhere('id', $this->project->method_form_id)
-                                        ->get()
+                                    // Récupérer d'abord les IDs des méthodes actives depuis method_form_groups
+                                    $activeMethodFormIds = \App\Models\MethodFormGroup::where('segmentation_id', $get('project.segmentation_id'))
+                                        ->pluck('active_method_form_id')
+                                        ->toArray();
+                                    
+                                    // Inclure toujours l'ID de la méthode actuelle si elle existe
+                                    if (!is_null($this->project->method_form_id)) {
+                                        $activeMethodFormIds[] = $this->project->method_form_id;
+                                    }
+                                    // Récupérer les méthodes dont l'ID est dans $activeMethodFormIds
+                                    return \App\Models\MethodForm::whereIn('id', $activeMethodFormIds)
                                         ->pluck('name', 'id')
                                         ->toArray();
+                                
+                                
                                 }),
                         ]),
 
@@ -335,7 +318,7 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 ->preserveFilenames()
                                 ->maxWidth(1200)
                                 ->getUploadedFileNameForStorageUsing(function ($file): string {
-                                    return Str::slug($this->project->name) . '_' . Str::random(3) . '_thumbnail.'.$file->getClientOriginalExtension();
+                                    return Str::slug($this->project->name).'_thumbnail.'.$file->getClientOriginalExtension();
                                 })
                                 ->acceptedFileTypes([
                                     'image/*',
@@ -348,7 +331,7 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 ->preserveFilenames()
                                 ->maxWidth(1200)
                                 ->getUploadedFileNameForStorageUsing(function ($file): string {
-                                    return Str::slug($this->project->name) . '_' . Str::random(3) .'_featured_image.'.$file->getClientOriginalExtension();
+                                    return Str::slug($this->project->name).'_featured_image.'.$file->getClientOriginalExtension();
                                 })
                                 ->acceptedFileTypes([
                                     'image/*',
@@ -419,6 +402,8 @@ class DetailsForm extends Component implements HasActions, HasForms
             title: 'Mise à jour des informations du projet',
             url: route('projects.show.details', ['project' => $this->project])
         );
+
+
     }
 
 
