@@ -8,11 +8,9 @@ use App\Models\Project;
 use App\Traits\Filament\HasDataState;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -57,17 +55,9 @@ class ProjectGoalsForm extends Component implements HasActions, HasForms
                                 ->rows(2)
                                 ->columnSpanFull(),
 
-                            DatePicker::make('project.start_at')
-                                ->placeholder('dd/mm/YYYY')
-                                ->required()
-                                ->displayFormat('d/m/Y')
-                                ->label('Date de démarrage'),
-
-                            TextInput::make('project.duration')
-                                ->placeholder('5')
-                                ->required()
-                                ->label('Durée (années)')
-                                ->numeric(),
+                            // Champs retirés de la fiche projet:
+                            // - Date de démarrage (project.start_at)
+                            // - Durée (années) (project.duration)
                         ]),
                 ]),
         ];

@@ -61,8 +61,6 @@ class GetProjectController extends Controller
             'lat',
             'lng',
             'goal_text',
-            'start_at',
-            'duration',
             'cost_global_ttc',
             'tco2',
             'cost_duration_years',
