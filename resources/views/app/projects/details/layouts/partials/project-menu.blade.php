@@ -11,8 +11,8 @@
             </x-slot:icon>
         </x-menu-card>
 
-        <x-menu-card :url="route('projects.show.goals', ['project' => $project->slug])" :is-active="request()->routeIs('projects.show.goals')" title="Objectifs / Sous-projets"
-            description="Définition des objectifs et gestion des sous-projets" wire:navigate.hover>
+        <x-menu-card :url="route('projects.show.goals', ['project' => $project->slug])" :is-active="request()->routeIs('projects.show.goals')" title="Sous-projets"
+            description="Gestion des sous-projets" wire:navigate.hover>
             <x-slot:icon>
                 {!! \App\Helpers\IconHelper::projectIcon() !!}
             </x-slot:icon>

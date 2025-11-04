@@ -47,7 +47,7 @@
                 </x-layouts.card>
             @endif
 
-            <livewire:forms.projects.project-goals-form :project="$project" />
+            
         </div>
     </x-slot>
 

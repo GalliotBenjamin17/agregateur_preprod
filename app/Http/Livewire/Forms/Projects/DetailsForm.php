@@ -41,6 +41,10 @@ class DetailsForm extends Component implements HasActions, HasForms
 
     public Project $project;
 
+    // UI flags to control embedded sections and submit rendering
+    public bool $embedGoals = false;
+    public bool $showSubmit = true;
+
     public array $tenants = [];
 
     public array $segmentations = [];
@@ -342,6 +346,10 @@ class DetailsForm extends Component implements HasActions, HasForms
             url: route('projects.show.details', ['project' => $this->project])
         );
 
+        // Also save goals (if present on the page)
+        if ($this->embedGoals) {
+            $this->dispatch('save-goals');
+        }
 
     }
 
@@ -351,3 +359,4 @@ class DetailsForm extends Component implements HasActions, HasForms
         return view('livewire.forms.projects.details-form');
     }
 }
+

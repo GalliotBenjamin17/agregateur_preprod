@@ -26,6 +26,11 @@ class ProjectGoalsForm extends Component implements HasActions, HasForms
     use InteractsWithActions;
 
     public Project $project;
+    public bool $showSubmit = true;
+
+    protected $listeners = [
+        'save-goals' => 'submit',
+    ];
 
     public function mount()
     {

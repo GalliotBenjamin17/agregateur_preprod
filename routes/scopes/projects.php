@@ -48,8 +48,11 @@ Route::prefix('projets')->group(function () {
             Route::get('carte', ShowProjectMapController::class)
                 ->name('projects.show.map');
 
-            Route::get('goals', ShowProjectGoalsController::class)
+            // Renamed path from 'goals' to 'subproject' while keeping the same route name
+            Route::get('subproject', ShowProjectGoalsController::class)
                 ->name('projects.show.goals');
+            // Backward-compatible redirect from old path
+            Route::redirect('goals', 'subproject');
 
             Route::get('donations', ShowProjectDonationsController::class)
                 ->name('projects.show.donations');
