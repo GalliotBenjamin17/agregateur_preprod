@@ -18,6 +18,7 @@ use Filament\Forms\Components\Grid;
 use Illuminate\Support\Facades\Http;
 use App\Traits\Filament\HasDataState;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\Fieldset;
@@ -152,7 +153,30 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 })
                                 ->label('Référence DREAL')
                                 ->nullable(),
+                                DatePicker::make('project.plantation_at')
+                                    ->label('Date de plantation')
+                                    ->native(false)
+                                    ->displayFormat('Y-m-d')
+                                    ->closeOnDateSelection()
+                                    ->nullable(),
                         ]),
+                        Fieldset::make()
+                            ->label("Information sur l'audit")
+                            ->disabled($this->project->hasFormFieldsDisabled())
+                            ->schema([
+
+                                Toggle::make('project.is_audit_done')
+                                    ->label("L'audit a-t-il été réalisé ?")
+                                    ->helperText("Cette information permet d'ajuster le calcul du risque."),
+                                
+                                DatePicker::make('project.planned_audit_year')
+                                        ->label("Date prévisionnel d'audit")
+                                        ->native(false)
+                                        ->displayFormat('Y-m-d')
+                                        ->closeOnDateSelection()
+                                        ->nullable(),
+
+                            ]),
 
                     Fieldset::make('project_management')
                         ->label('Visibilité / synchronisation projet')
@@ -251,7 +275,8 @@ class DetailsForm extends Component implements HasActions, HasForms
                                 ->placeholder('Lyon')
                                 ->preload(),
 
-                        ]),
+                        ]),
+
                     Fieldset::make('illustrations')
                         ->label('Illustrations')
                         ->schema([
