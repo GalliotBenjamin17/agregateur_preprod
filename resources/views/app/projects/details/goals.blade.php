@@ -30,19 +30,8 @@
                         @endif
                     </x-slot:actions>
 
-                    <x-slot:content>
-                        @if($project->children_projects_count > 0)
-                            <livewire:tables.projects.index-table :project="$project" />
-                        @else
-                            <div class="p-2.5 sm:p-[1rem] flex items-center flex-wrap gap-x-5 gap-y-2">
-                                <x-empty-model
-                                    content="Aucun sous projet référencé"
-                                    :model="new \App\Models\Project()"
-                                    class="col-span-4"
-                                    height="48"
-                                />
-                            </div>
-                        @endif
+<x-slot:content>
+                        <livewire:tables.projects.index-table :project="$project" />
                     </x-slot:content>
                 </x-layouts.card>
             @endif
@@ -75,3 +64,4 @@
         @endif
     </x-slot:modals>
 </x-pages.projects.details-base>
+

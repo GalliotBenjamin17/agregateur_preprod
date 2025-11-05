@@ -114,6 +114,27 @@ class Project extends Model
         return $this->hasMany(Project::class, 'parent_project_id', 'id');
     }
 
+    /**
+     * Get IDs of all descendant projects (children, grandchildren, ...).
+     * Optionally include the current project ID.
+     *
+     * @return array<string>
+     */
+    public function descendantIds(bool $includeSelf = true): array
+    {
+        $ids = $includeSelf ? [$this->id] : [];
+
+        $this->loadMissing('childrenProjects');
+
+        foreach ($this->childrenProjects as $child) {
+            $ids[] = $child->id;
+            // Merge recursively with child's descendants (excluding child duplicate handling via array_unique below)
+            $ids = array_merge($ids, $child->descendantIds(includeSelf: false));
+        }
+
+        return array_values(array_unique($ids));
+    }
+
     public function referent(): BelongsTo
     {
         return $this->belongsTo(User::class, 'referent_id', 'id');

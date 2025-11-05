@@ -35,9 +35,12 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
         return DonationSplit::with([
             'donation.related',
             'childrenSplits',
+            'project',
         ])->withCount([
             'childrenSplits',
-        ])->where('project_id', $this->project->id)
+        ])
+            ->whereIn('project_id', $this->project->descendantIds(includeSelf: true))
+            ->whereDoesntHave('childrenSplits') // only leaf splits to avoid duplicates
             ->orderBy('project_id');
     }
 
@@ -57,7 +60,10 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
         return [
             Action::make('Flécher')
                 ->visible(function (DonationSplit $record) {
-                    return $this->project->hasChildrenProjects() and $record->childrenSplits->sum('amount') < $record->amount;
+                    // Only allow splitting from the current project's own rows
+                    return $this->project->hasChildrenProjects()
+                        && ($record->project_id === $this->project->id)
+                        && ($record->childrenSplits->sum('amount') < $record->amount);
                 })
                 ->action(function (DonationSplit $record, array $data): void {
                     try {
@@ -92,7 +98,6 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
                             return $this->project->childrenProjects()
                                 ->get()
                                 ->filter(function ($item) {
-
                                     if (is_null($item->amount_wanted_ttc)) {
                                         return false;
                                     }
@@ -104,7 +109,7 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
                         }),
                     TextInput::make('amount')
                         ->label('Montant TTC')
-                        ->suffix('€ TTC')
+                        ->suffix(' € TTC')
                         ->minValue(1)
                         ->required()
                         ->helperText(function (Model $record) {
@@ -134,38 +139,33 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
                     return Str::limit("ID ctrb.: {$record->donation?->id}", 15);
                 })
                 ->label('Donateur'),
+
             TextColumn::make('amount')
                 ->label('Montant affilié au projet')
                 ->formatStateUsing(fn ($state) => format($state))
-                ->description(function (DonationSplit $record) {
-                    return $record->tonne_co2.' tCO2';
-                })
+                ->description(fn (DonationSplit $record) => $record->tonne_co2.' tCO2')
                 ->suffix(' € TTC'),
 
             TextColumn::make('children_splits_count')
                 ->label('Fléchage sous-projet')
                 ->formatStateUsing(function (DonationSplit $record) {
-                    if (count($record->childrenSplits) > 0) {
-                        return format($record->childrenSplits()->sum('amount')).' € TTC';
+                    if ($record->project_id !== $this->project->id) {
+                        return $record->project?->name ?? 'Sous-projet inconnu';
                     }
-
                     return 'Aucun fléchage sous-projet';
                 })
                 ->description(function (DonationSplit $record) {
-                    if ($record->children_splits_count > 1) {
-                        return $record->children_splits_count.' répartitions';
+                    if ($record->project_id !== $this->project->id) {
+                        return format($record->amount).' € TTC';
                     }
-
-                    if ($record->children_splits_count == 1) {
-                        return $record->children_splits_count.' répartition';
-                    }
-
                     return 'Aucune répartition';
-                })->hidden($this->project->hasParent()),
+                })
+                ->hidden($this->project->hasParent()),
+
             TextColumn::make('splitBy.name')
                 ->label('Temporalité')
                 ->description(function (Model $record): ?string {
-                    return $record->created_at->format('\A H:i \l\e d/m/Y');
+                    return $record->created_at->format('À H:i le d/m/Y');
                 })
                 ->searchable(query: function (Builder $query, string $search): Builder {
                     return $query
@@ -173,7 +173,6 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
                         ->orWhereRelation('splitBy', 'last_name', 'LIKE', "%{$search}%");
                 })
                 ->sortable(['created_at']),
-
         ];
     }
 
@@ -182,3 +181,4 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
         return view('livewire.tables.donations.donation-splits-project-table');
     }
 }
+

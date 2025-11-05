@@ -67,7 +67,12 @@
             </x-slot:icon>
 
             <x-slot:content>
-                @if ($project->donation_splits_count > 0)
+                @php
+                    $hasContributions = isset($donationSplitsAggregatedCount)
+                        ? $donationSplitsAggregatedCount > 0
+                        : ($project->donation_splits_count ?? 0) > 0;
+                @endphp
+                @if ($hasContributions)
                     <style>
                         .filament-tables-table-container {
                             border-top-left-radius: 0px !important;

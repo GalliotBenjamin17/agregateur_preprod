@@ -55,7 +55,7 @@ class ProjectGoalsForm extends Component implements HasActions, HasForms
                                 ->rows(2)
                                 ->columnSpanFull(),
 
-                            // Champs retirés de la fiche projet:
+                            // Champs retirés précédemment de la fiche projet:
                             // - Date de démarrage (project.start_at)
                             // - Durée (années) (project.duration)
                         ]),
