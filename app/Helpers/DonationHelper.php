@@ -110,7 +110,7 @@ class DonationHelper
             throw new MoreDonationSplitAmountThanExpectedException();
         }
 
-        $subProject = Project::findOrFail($split['project_id']);
+        $subProject = Project::with('activeCarbonPrice')->findOrFail($split['project_id']);
 
         try {
             $amount = self::getAmount(project: $subProject, amount: $split['amount']);
@@ -124,8 +124,9 @@ class DonationHelper
             'project_id' => $split['project_id'],
             'amount' => $amount,
             'split_by' => request()->user()->id,
-            'project_carbon_price_id' => $project->activeCarbonPrice->id,
-            'tonne_co2' => $amount / TVAHelper::getTTC($project->activeCarbonPrice->price),
+            // Use sub-project's carbon price context
+            'project_carbon_price_id' => $subProject->activeCarbonPrice->id,
+            'tonne_co2' => $amount / TVAHelper::getTTC($subProject->activeCarbonPrice->price),
         ]);
     }
 

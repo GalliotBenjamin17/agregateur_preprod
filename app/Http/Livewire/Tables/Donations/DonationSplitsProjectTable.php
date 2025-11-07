@@ -94,6 +94,28 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
                         ->label('Sous-projet')
                         ->required()
                         ->searchable()
+                        ->reactive()
+                        ->helperText(function (callable $get) {
+                            $projectId = $get('project_id');
+                            if (! $projectId) {
+                                return 'Sélectionnez un sous-projet';
+                            }
+
+                            $child = Project::find($projectId);
+                            if (! $child) {
+                                return null;
+                            }
+
+                            // Reste à financer cohérent avec la page du sous-projet:
+                            // cost_global_ttc - somme des splits FEUILLES pour ce sous-projet (pas les parents)
+                            $costTtc = (float) ($child->cost_global_ttc ?? 0);
+                            $current = \App\Models\DonationSplit::where('project_id', $child->id)
+                                ->whereDoesntHave('childrenSplits')
+                                ->sum('amount');
+                            $remaining = max(0, $costTtc - $current);
+
+                            return 'Reste à financer sur ce sous-projet: ' . format($remaining) . ' € TTC';
+                        })
                         ->options(function () {
                             return $this->project->childrenProjects()
                                 ->get()
@@ -113,7 +135,7 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
                         ->minValue(1)
                         ->required()
                         ->helperText(function (Model $record) {
-                            return 'Vous pouvez encore flécher '.(format($record->amount - $record->childrenSplits->sum('amount'))).' € TTC';
+                            return 'Vous pouvez encore flécher ' . (format($record->amount - $record->childrenSplits->sum('amount'))) . ' € TTC (sur la contribution sélectionnée)';
                         })
                         ->numeric()
                         ->step('.01')
@@ -124,7 +146,28 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
                                         $fail('Le montant maximal du fléchage est de '.(format($record->amount - $record->childrenSplits->sum('amount'))).' € TTC');
                                     }
                                 };
-                            }]),
+                            },
+                            function (callable $get) {
+                                return function (string $attribute, $value, Closure $fail) use ($get) {
+                                    $projectId = $get('project_id');
+                                    if (! $projectId) {
+                                        return;
+                                    }
+                                    $child = Project::find($projectId);
+                                    if (! $child) {
+                                        return;
+                                    }
+                                    $costTtc = (float) ($child->cost_global_ttc ?? 0);
+                                    $current = \App\Models\DonationSplit::where('project_id', $child->id)
+                                        ->whereDoesntHave('childrenSplits')
+                                        ->sum('amount');
+                                    $remaining = max(0, $costTtc - $current);
+                                    if ($value > $remaining) {
+                                        $fail('Le montant dépasse le reste à financer du sous-projet: ' . format($remaining) . ' € TTC');
+                                    }
+                                };
+                            }
+                        ]),
                 ])
                 ->modalHeading('Fléchage de la contribution')
                 ->modalSubmitActionLabel('Flécher'),
@@ -165,7 +208,8 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
             TextColumn::make('splitBy.name')
                 ->label('Temporalité')
                 ->description(function (Model $record): ?string {
-                    return $record->created_at->format('À H:i le d/m/Y');
+                    // Escape 'l' (day name) and 'e' (timezone) to render literal "le"
+                    return $record->created_at->format('À H:i \l\e d/m/Y');
                 })
                 ->searchable(query: function (Builder $query, string $search): Builder {
                     return $query
@@ -181,4 +225,3 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
         return view('livewire.tables.donations.donation-splits-project-table');
     }
 }
-
