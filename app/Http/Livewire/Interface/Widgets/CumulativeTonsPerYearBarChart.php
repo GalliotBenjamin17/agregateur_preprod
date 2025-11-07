@@ -46,7 +46,7 @@ class CumulativeTonsPerYearBarChart extends ChartWidget
 
     protected function getData(): array
     {
-        $donationSplits = DonationSplit::with('project')
+        $donationSplits = DonationSplit::with(['project.parentProject'])
             ->when($this->organization, function ($query) {
                 return $query->whereRelation('donation', 'related_id', $this->organization->id)
                     ->whereRelation('donation', 'related_type', get_class($this->organization));
@@ -74,14 +74,27 @@ class CumulativeTonsPerYearBarChart extends ChartWidget
             // Count this split if it's a top-level split with no children
             return true;
         })->each(function (DonationSplit &$donationSplit) {
-            if (!$donationSplit->project->segmentation_id) {
-                $donationSplit->project->segmentation_id = $donationSplit->parent->project->segmentation_id;
+            // Resolve segmentation from project or its parent chain
+            $segmentationId = optional($donationSplit->project)->segmentation_id;
+
+            $project = $donationSplit->project;
+            // Walk up the parent project chain until a segmentation is found
+            while (!$segmentationId && $project && $project->parentProject) {
+                $project->loadMissing('parentProject');
+                $project = $project->parentProject;
+                $segmentationId = $project?->segmentation_id;
             }
+
+            // If still not found, flag as undefined bucket
+            $donationSplit->resolved_segmentation_id = $segmentationId ?? 'undefined';
         });
 
-        $donationSplitsGrouped = $donationSplits->groupBy('project.segmentation_id');
-
-        $segmentations = Segmentation::whereIn('id', $donationSplitsGrouped->keys())->get();
+        $donationSplitsGrouped = $donationSplits->groupBy('resolved_segmentation_id');
+        // Only query real segmentation ids (exclude the undefined bucket)
+        $segmentationIds = collect($donationSplitsGrouped->keys())
+            ->filter(fn ($k) => $k !== 'undefined')
+            ->values();
+        $segmentations = Segmentation::whereIn('id', $segmentationIds)->get();
 
         $datasets = [];
         $years = [];
@@ -103,8 +116,13 @@ class CumulativeTonsPerYearBarChart extends ChartWidget
                 $yearlyData[(string) $mandatoryYear] = collect($perYear[$mandatoryYear] ?? [])->sum('tonne_co2');
             }
 
-            $segmentationName = $segmentations->where('id', $key)->first()?->name ?? 'Autre';
-            $segmentationColor = $segmentations->where('id', $key)->first()?->chart_color ?? '#808080';
+            if ($key === 'undefined') {
+                $segmentationName = 'Segment non défini';
+                $segmentationColor = '#808080';
+            } else {
+                $segmentationName = $segmentations->where('id', $key)->first()?->name ?? 'Autre';
+                $segmentationColor = $segmentations->where('id', $key)->first()?->chart_color ?? '#808080';
+            }
 
             $years = [
                 ...$years,
