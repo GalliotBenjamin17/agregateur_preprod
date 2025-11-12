@@ -220,6 +220,8 @@ class DonationSplitsProjectTable extends Component implements HasForms, HasTable
         ];
     }
 
+    
+
     public function render()
     {
         return view('livewire.tables.donations.donation-splits-project-table');

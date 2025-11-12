@@ -124,6 +124,8 @@ class DonationSplitsTable extends Component implements HasForms, HasTable
         ];
     }
 
+    
+
     protected function getTableActions(): array
     {
         return [

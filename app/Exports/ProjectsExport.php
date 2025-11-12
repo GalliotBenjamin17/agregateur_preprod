@@ -276,7 +276,7 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
             {
                 return [
                     'ID don', 'Type financeur', 'ID financeur',
-                    'Nom de l’organisation', 'Total contributions TTC €', 'Total contributions HT €', 'Email de facturation',
+                    'Nom de l’organisation','Adresse','Code postal','Total contributions TTC €', 'Total contributions HT €', 'Email de facturation',
                     'SIRET', 'SIREN', 'Raison sociale', 'Code activité', 'Date de création', 'Sociétaire', 'Représentants',
                     'Email (générique)', 'Téléphone',
                     'Représentant 1 - Nom', 'Représentant 1 - Prénom', 'Représentant 1 - Email', 'Représentant 1 - Téléphone',
@@ -300,6 +300,8 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
                 $reps            = null;
                 $contactEmail    = null;
                 $contactPhone    = null;
+                $adresse         = null;
+                $codepostal      = null;
                 $contacts        = [];
                 $representatives = [];
                 $related         = $row->related;
@@ -310,6 +312,8 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
                         $siret           = $related->legal_siret ?? null;
                         $siren           = $related->legal_siren ?? null;
                         $legalName       = $related->legal_name ?? null;
+                        $adresse         = $related->address_1 ?? null;
+                        $codepostal      = $related->address_postal_code ?? null;
                         $activity        = $related->legal_activity_code ?? null;
                         $createdAt       = $related->legal_created_at ?? null;
                         $isSoc           = $related->is_shareholder ? 'Oui' : 'Non';
@@ -368,6 +372,8 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
                     $row->related_type,
                     $row->related_id,
                     $name,
+                    $adresse,
+                    $codepostal,
                     $totalTtc,
                     $totalHt,
                     $billingEmail,
@@ -383,7 +389,7 @@ class ProjectsExport implements FromCollection, ShouldAutoSize, WithColumnFormat
                 ], $repFlat, $flat);
             }
             public function columnFormats(): array
-            {return ['E' => NumberFormat::FORMAT_CURRENCY_EUR, 'F' => NumberFormat::FORMAT_CURRENCY_EUR];}
+            {return ['E' => NumberFormat::FORMAT_CURRENCY_EUR, 'G' => NumberFormat::FORMAT_CURRENCY_EUR];}
             public function title(): string
             {return 'Financeurs';}
         };
